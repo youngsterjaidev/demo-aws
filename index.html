@@ -28,20 +28,32 @@
       const cName = document.querySelector("[name='name']");
       const address = document.querySelector("[name='address']");
 
+      axios.get("http://localhost:8080/get").then((res) => {
+        res.data.forEach(({ name, address }) => {
+          const el = document.createElement("div");
+          el.innerHTML = `<h5>${name}-${address}</h5>`;
+          document.body.appendChild(el);
+        });
+      });
+
       form.addEventListener("submit", async (e) => {
         try {
           e.preventDefault();
 
+          let data = {
+            name: cName.value || "",
+            address: address.value || "",
+          };
+
+          console.log("The Data : ", data);
+
           let response = await axios({
-            url: "",
+            url: "http://localhost:8080/post",
             method: "POST",
-            data: {
-              name: cName.value || "",
-              address: address.value || "",
-            },
+            data: data,
           });
 
-          console.log(response);
+          window.location.reload();
         } catch (e) {
           console.log("Error occured while submiting the form : ", e);
         }
