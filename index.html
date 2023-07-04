@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address entry</title>
+  </head>
+  <body>
+    <form>
+      <div>
+        <input type="text" placeholder="enter the name" name="name" />
+      </div>
+      <div>
+        <input type="text" placeholder="enter the address" name="address" />
+      </div>
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+    <script>
+      const form = document.querySelector("form");
+      const cName = document.querySelector("[name='name']");
+      const address = document.querySelector("[name='address']");
+
+      form.addEventListener("submit", async (e) => {
+        try {
+          e.preventDefault();
+
+          let response = await axios({
+            url: "",
+            method: "POST",
+            data: {
+              name: cName.value || "",
+              address: address.value || "",
+            },
+          });
+
+          console.log(response);
+        } catch (e) {
+          console.log("Error occured while submiting the form : ", e);
+        }
+      });
+    </script>
+  </body>
+</html>
