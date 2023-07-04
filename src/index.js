@@ -72,15 +72,15 @@ connection.connect((err) => {
     }
 
     const { name, address } = req.body;
-    connection.query(
-      `INSERT INTO customers (${name}, ${address}) VALUES ('Company Inc', 'Highway 37')`,
-      (error, results, fields) => {
-        if (error) throw error;
 
-        console.log("The result: ", results, fields);
-        res.send("Entered the data into the table");
-      }
-    );
+    const sql = `INSERT INTO customers (name, address) VALUES ('${name}', '${address}')`;
+    console.log(req.body, sql);
+    connection.query(sql, (error, results, fields) => {
+      if (error) throw error;
+
+      console.log("The result: ", results, fields);
+      res.send("Entered the data into the table");
+    });
   });
 
   app.listen(port, () => {
