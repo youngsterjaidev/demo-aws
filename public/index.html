@@ -28,7 +28,7 @@
       const cName = document.querySelector("[name='name']");
       const address = document.querySelector("[name='address']");
 
-      axios.get("http://localhost:8080/get").then((res) => {
+      axios.get("/get").then((res) => {
         res.data.forEach(({ name, address }) => {
           const el = document.createElement("div");
           el.innerHTML = `<h5>${name}-${address}</h5>`;
@@ -48,7 +48,7 @@
           console.log("The Data : ", data);
 
           let response = await axios({
-            url: "http://localhost:8080/post",
+            url: "/post",
             method: "POST",
             data: data,
           });

@@ -79,7 +79,6 @@
     "ms": "^2.0.0",
     "mysql": "^2.18.1",
     "negotiator": "^0.6.3",
-    "nodemon": "^2.0.22",
     "nopt": "^1.0.10",
     "normalize-path": "^3.0.0",
     "object-assign": "^4.1.1",
@@ -128,9 +127,14 @@
     "xmlbuilder": "^11.0.1"
   },
   "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
 }
