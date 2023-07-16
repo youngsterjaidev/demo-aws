@@ -6,7 +6,14 @@ const cors = require("cors");
 const axios = require("axios");
 const port = process.env.PORT || 3000;
 
-const SERVER_URI = process.env.SERVER_URI || "http://localhost:8080";
+const {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} = require("@aws-sdk/client-secrets-manager");
+
+const client = new SecretsManagerClient({
+  region: process.env.REGION,
+});
 
 // Middleware
 app.use(cors());
@@ -14,33 +21,53 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/", express.static("public"));
 
-app.get("/get", async (req, res) => {
-  let response = await axios.get(`${SERVER_URI}/get`);
+(async () => {
+  let secretsResponse = await client.send(
+    new GetSecretValueCommand({
+      SecretId: process.env.SECRET_ID,
+      VersionStage: "AWSCURRENT",
+    })
+  );
 
-  if (response.status === 200) {
-    res.json(response.data);
+  if (!secretsResponse) {
+    console.log(
+      "Error Occured while retriving the secrets from secret Manager "
+    );
     return;
   }
 
-  res.status(400).json([{ message: "Not Found" }]);
-});
+  const { serverUri } = JSON.parse(secretsResponse.SecretString);
 
-app.post("/post", async (req, res) => {
-  if (!req.body) {
-    res.send("Send Some Data");
-    return;
-  }
+  const SERVER_URI = serverUri || "http://localhost:8080";
 
-  let response = await axios.post(`${SERVER_URI}/post`, req.body);
+  app.get("/get", async (req, res) => {
+    let response = await axios.get(`${SERVER_URI}/get`);
 
-  if (response.status === 200) {
-    res.json([{ message: "Entered the data into the table" }]);
-    return;
-  }
+    if (response.status === 200) {
+      res.json(response.data);
+      return;
+    }
 
-  res.status(400).json([{ message: "Not Found" }]);
-});
+    res.status(400).json([{ message: "Not Found" }]);
+  });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost${port}`);
-});
+  app.post("/post", async (req, res) => {
+    if (!req.body) {
+      res.send("Send Some Data");
+      return;
+    }
+
+    let response = await axios.post(`${SERVER_URI}/post`, req.body);
+
+    if (response.status === 200) {
+      res.json([{ message: "Entered the data into the table" }]);
+      return;
+    }
+
+    res.status(400).json([{ message: "Not Found" }]);
+  });
+
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost${port}`);
+  });
+})();
