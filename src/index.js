@@ -29,10 +29,15 @@ app.use(bodyParser.json());
     );
 
     if (!secretsResponse) {
+      console.log(
+        "Error Occured while retriving the secrets from secret Manager "
+      );
+      return;
     }
 
-    const { host, user, password, port, database } =
-      secretsResponse.SecretString;
+    const { host, user, password, dbPort, database } = JSON.parse(
+      secretsResponse.SecretString
+    );
 
     //
 
@@ -41,7 +46,7 @@ app.use(bodyParser.json());
       host,
       user,
       password,
-      port,
+      port: dbPort,
       database,
     });
 
